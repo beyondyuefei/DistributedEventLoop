@@ -1,0 +1,32 @@
+# 忽略 IDE 相关文件
+.idea/
+*.iml
+
+# 忽略构建输出目录
+target/
+
+# 忽略日志文件
+*.log
+
+# 忽略配置文件中的本地敏感信息（例如数据库密码等）备份
+*.properties.bak
+*.yml.bak
+
+# 忽略 Maven 或 Gradle 的本地仓库缓存
+.m2/repository/
+.gradle/
+
+# 忽略测试报告
+test-output/
+
+# 忽略 Docker 相关文件（如果项目涉及 Docker 部署）
+Dockerfile*
+.dockerignore
+
+# 忽略临时文件
+*.tmp
+
+# 忽略 Mac 系统相关文件
+.DS_Store
+
+out/
