@@ -28,12 +28,12 @@ public class ResourceExecutorComponent implements Lifecycle {
     }
 
     public void execute(Runnable runnable, ResourceKey resourceKey) {
-        final EventLoop eventLoop = eventLoopLoadingCache.get(resourceKey.getKey());
+        final EventLoop eventLoop = getEventLoop(resourceKey);
         eventLoop.execute(runnable);
     }
 
     public CompletableFuture<Void> executeAsync(Runnable runnable, ResourceKey resourceKey) {
-        final EventLoop eventLoop = eventLoopLoadingCache.get(resourceKey.getKey());
+        final EventLoop eventLoop = getEventLoop(resourceKey);
         return CompletableFuture.runAsync(() -> {
             try {
                 // todo 待优化，支持超时、异常封装到CF等
@@ -42,6 +42,10 @@ public class ResourceExecutorComponent implements Lifecycle {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    EventLoop getEventLoop(ResourceKey resourceKey) {
+        return eventLoopLoadingCache.get(resourceKey.getKey());
     }
 
     private EventLoop next() {
