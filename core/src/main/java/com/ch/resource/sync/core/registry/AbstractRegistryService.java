@@ -1,11 +1,17 @@
 package com.ch.resource.sync.core.registry;
 
-import java.util.List;
+import com.ch.resource.sync.core.common.Node;
 
 public abstract class AbstractRegistryService implements RegistryService{
-    protected List<RegistryNotifyListener> registryNotifyListeners;
+    protected volatile RegistryNotifyListener registryNotifyListeners;
 
-    protected void doNotify() {
-       // registryNotifyListeners.forEach(RegistryNotifyListener::registryNotify);
+    @Override
+    public void subscribe(RegistryNotifyListener registryNotifyListener) {
+        this.registryNotifyListeners = registryNotifyListener;
+    }
+
+    protected final Node localNode() {
+        // fixme 如果是netty启动http handler，则需要获取端口才行
+        return new Node("127.0.0.1", 1211);
     }
 }

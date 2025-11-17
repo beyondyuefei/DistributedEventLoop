@@ -5,9 +5,14 @@ import com.ch.resource.sync.core.common.Node;
 import java.util.List;
 
 public interface RegistryService {
-    void register(final Node node);
+    void register();
 
-    void subscribe(final RegistryNotifyListener listener);
+    // note: 职责上应该是 Cluster需要订阅，并关注集群变化
+    void subscribe(final RegistryNotifyListener registryNotifyListener);
 
     List<Node> getNodes();
+
+    void unsubscribe();
+
+    void unregister();
 }

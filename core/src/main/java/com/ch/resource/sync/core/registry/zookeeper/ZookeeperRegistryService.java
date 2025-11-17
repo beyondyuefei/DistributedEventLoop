@@ -3,31 +3,56 @@ package com.ch.resource.sync.core.registry.zookeeper;
 import com.ch.resource.sync.core.common.Node;
 import com.ch.resource.sync.core.registry.AbstractRegistryService;
 import com.ch.resource.sync.core.registry.RegistryNotifyListener;
-import com.ch.resource.sync.core.registry.RegistryService;
-import org.I0Itec.zkclient.ZkClient;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.cache.CuratorCache;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 
 import java.util.List;
 
 public class ZookeeperRegistryService extends AbstractRegistryService {
-    private final ZkClient zkClient;
+    private CuratorFramework zkClient;
+    private RegistryNotifyListener listener;
+    private static final String CLUSTER_PATH = "/resource-sync/cluster";
+    private CuratorCache curatorCache;
 
     public ZookeeperRegistryService(final String zkServers, final Integer connectionTimeout) {
         if (zkServers == null) {
             throw new IllegalArgumentException("zkServers can not be null");
         }
-        this.zkClient = new ZkClient(zkServers, connectionTimeout);
+
+        this.zkClient = CuratorFrameworkFactory.builder()
+                .connectString(zkServers)
+                .sessionTimeoutMs(60000)
+                .connectionTimeoutMs(connectionTimeout)
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .build();
+
+        zkClient.getConnectionStateListenable().addListener(this::handleConnectionStateChange);
+        zkClient.start();
     }
 
     @Override
-    public void register(Node node) {
-
+    public void register() {
+        final Node localNode = localNode();
+       // zkClient.
     }
 
     @Override
-    public void subscribe(RegistryNotifyListener listener) {
+    public void subscribe(RegistryNotifyListener registryNotifyListener) {
         //todo
 
         doNotify();
+    }
+
+    @Override
+    public void unsubscribe() {
+
+    }
+
+    @Override
+    public void unregister() {
+
     }
 
     @Override
