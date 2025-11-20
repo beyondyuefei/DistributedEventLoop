@@ -50,6 +50,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
                 LOGGER.info("zookeeper客户端初始化成功，zookeeper集群节点: {}", nodes);
             }
         } catch (Exception e) {
+            // fixme 对于 TimeoutException，可以接入重试机制
             final String errorMsg = "zookeeper客户端初始化失败";
             LOGGER.error(errorMsg, e);
             throw new LifecycleException(errorMsg, e);
