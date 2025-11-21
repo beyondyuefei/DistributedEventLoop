@@ -45,14 +45,22 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
     public void start() {
         try {
             zkClient.start();
-            final List<Node> nodes = initNodesFuture.get(10, TimeUnit.SECONDS);
+            final List<Node> nodes = initNodesFuture.get(15, TimeUnit.SECONDS);
             if (nodes != null && !nodes.isEmpty()) {
                 LOGGER.info("zookeeper客户端初始化成功，zookeeper集群节点: {}", nodes);
+            } else {
+                final String errorMsg = "zookeeper客户端初始化异常，无节点数据，请确认zookeeper集群是否正常启动";
+                LOGGER.error(errorMsg);
+                throw new LifecycleException(errorMsg);
             }
         } catch (Exception e) {
-            // fixme 对于 TimeoutException，可以接入重试机制
             final String errorMsg = "zookeeper客户端初始化失败";
             LOGGER.error(errorMsg, e);
+            try {
+                zkClient.close();
+            } catch (Exception e1) {
+                LOGGER.warn("zookeeper客户端关闭异常", e1);
+            }
             throw new LifecycleException(errorMsg, e);
         }
     }
