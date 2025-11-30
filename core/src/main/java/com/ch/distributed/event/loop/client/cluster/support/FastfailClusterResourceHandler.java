@@ -11,7 +11,7 @@ public class FastfailClusterResourceHandler extends AbstractClusterResourceHandl
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FastfailClusterResourceHandler.class);
 
     @Override
-    public <R> ResourceHandlerResponse<CompletableFuture<R>> handle(ResourceHandlerRequest resourceHandlerRequest) {
+    public CompletableFuture<ResourceHandlerResponse> handle(ResourceHandlerRequest resourceHandlerRequest) {
         try {
             return doSelect(resourceHandlerRequest).handle(resourceHandlerRequest);
         } catch (Exception e) {

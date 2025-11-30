@@ -25,6 +25,11 @@ public class HttpRemoteService extends AbstractRemoteService {
         super(node);
     }
 
+    protected HttpRemoteService(Node node, HttpClient httpClient) {
+        super(node);
+        this.httpClient = httpClient;
+    }
+
     @Override
     public void start() {
         if (httpClient != null) {
@@ -45,42 +50,43 @@ public class HttpRemoteService extends AbstractRemoteService {
             System.setProperty("jdk.httpclient.keepalive.timeout", "30"); // 保持连接时间（秒）
             System.setProperty("jdk.httpclient.connectionPoolSize", "100"); // 连接池大小
             System.setProperty("jdk.httpclient.maxConnections", "100"); // 最大连接数
+
+            LOGGER.info("HttpRemoteService start success");
         }
     }
 
     @Override
-    public <R> ResourceHandlerResponse<CompletableFuture<R>> handle(ResourceHandlerRequest resourceHandlerRequest) {
+    public CompletableFuture<ResourceHandlerResponse> handle(ResourceHandlerRequest resourceHandlerRequest) {
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL.formatted(node.getIp(), node.getPort())))
                 .header("Content-Type", "application/json")
-                .header("ResourceHandlerName", resourceHandlerRequest.resourceHandlerName().toString())
-                .POST(HttpRequest.BodyPublishers.ofByteArray(resourceHandlerRequest.payload()))
+                .header("ResourceHandlerName", resourceHandlerRequest.resourceHandlerName())
+                .POST(HttpRequest.BodyPublishers.ofString(resourceHandlerRequest.payload()))
                 .timeout(Duration.ofSeconds(5))
                 .build();
         final CompletableFuture<HttpResponse<String>> completableFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        return new ResourceHandlerResponse<>() {
+        return completableFuture.thenApply(response -> new ResourceHandlerResponse() {
             @Override
             public boolean isSuccess() {
-                return completableFuture.isDone() && !completableFuture.isCompletedExceptionally();
+                return response.statusCode() == 200;
             }
 
             @Override
-            public CompletableFuture<R> data() {
-                //todo: check一下这里的类型转换
-                return completableFuture.thenApply(stringHttpResponse ->
-                        JSON.parseObject(stringHttpResponse.body(), new TypeReference<>() {
-                        }));
+            public String data() {
+                return response.body();
             }
 
             @Override
             public Exception exception() {
+                // fixme: check这么写是否正确，以及 status != 200 的处理
                 return new ResourceHandlerException(completableFuture.exceptionNow());
             }
-        };
+        });
     }
 
     @Override
     public void stop() {
         httpClient.close();
+        LOGGER.info("HttpRemoteService stop success");
     }
 }

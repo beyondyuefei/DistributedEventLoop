@@ -1,9 +1,9 @@
 package com.ch.distributed.event.loop.client;
 
-public interface ResourceHandlerResponse<R> {
+public interface ResourceHandlerResponse {
     boolean isSuccess();
 
-    R data();
+    String data();
 
     Exception exception();
 }
