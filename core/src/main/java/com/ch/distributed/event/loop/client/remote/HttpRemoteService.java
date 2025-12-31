@@ -56,7 +56,7 @@ public class HttpRemoteService extends AbstractRemoteService {
     }
 
     @Override
-    public CompletableFuture<ResourceHandlerResponse> handle(ResourceHandlerRequest resourceHandlerRequest) {
+    public CompletableFuture<ResourceHandlerResponse> handle(ResourceHandlerRequest<String> resourceHandlerRequest) {
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL.formatted(node.getIp(), node.getPort())))
                 .header("Content-Type", "application/json")

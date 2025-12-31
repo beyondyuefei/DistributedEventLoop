@@ -29,15 +29,15 @@ public class HttpRemoteServiceTest {
         HttpRemoteService httpRemoteService = new HttpRemoteService(new Node("127.0.0.1", 80), mockHttpClient);
         httpRemoteService.start();
 
-        final ResourceHandlerRequest resourceHandlerRequest = new ResourceHandlerRequest() {
+        final ResourceHandlerRequest<String> resourceHandlerRequest = new ResourceHandlerRequest<>() {
             @Override
             public String getKey() {
                 return "abc";
             }
 
             @Override
-            public <T> T payload() {
-                return (T) "fdsfds";
+            public String payload() {
+                return "fdsfds";
             }
 
             @Override
