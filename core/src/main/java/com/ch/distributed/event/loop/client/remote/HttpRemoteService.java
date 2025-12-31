@@ -1,7 +1,6 @@
 package com.ch.distributed.event.loop.client.remote;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import com.ch.distributed.event.loop.client.ResourceHandlerRequest;
 import com.ch.distributed.event.loop.client.ResourceHandlerResponse;
 import com.ch.distributed.event.loop.common.Node;
@@ -16,7 +15,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
-public class HttpRemoteService extends AbstractRemoteService {
+public class HttpRemoteService<T, R> extends AbstractRemoteService<T, R> {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HttpRemoteService.class);
     private volatile HttpClient httpClient;
     private static final String URL = "http://%s:%s/resource/handler/";
@@ -56,24 +55,24 @@ public class HttpRemoteService extends AbstractRemoteService {
     }
 
     @Override
-    public CompletableFuture<ResourceHandlerResponse> handle(ResourceHandlerRequest<String> resourceHandlerRequest) {
+    public CompletableFuture<ResourceHandlerResponse<R>> handle(ResourceHandlerRequest<T> resourceHandlerRequest, final Class<R> rClass) {
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL.formatted(node.getIp(), node.getPort())))
                 .header("Content-Type", "application/json")
                 .header("ResourceHandlerName", resourceHandlerRequest.resourceHandlerName())
-                .POST(HttpRequest.BodyPublishers.ofString(resourceHandlerRequest.payload()))
+                .POST(HttpRequest.BodyPublishers.ofString(resourceHandlerRequest.payload().toString()))
                 .timeout(Duration.ofSeconds(5))
                 .build();
         final CompletableFuture<HttpResponse<String>> completableFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        return completableFuture.thenApply(response -> new ResourceHandlerResponse() {
+        return completableFuture.thenApply(response -> new ResourceHandlerResponse<>() {
             @Override
             public boolean isSuccess() {
                 return response.statusCode() == 200;
             }
 
             @Override
-            public String data() {
-                return response.body();
+            public R data() {
+                return JSON.parseObject(response.body(), rClass);
             }
 
             @Override

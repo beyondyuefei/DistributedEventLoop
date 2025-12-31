@@ -14,6 +14,7 @@ import static org.mockito.Mockito.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -26,7 +27,7 @@ public class HttpRemoteServiceTest {
 
     @Test
     public void test() throws ExecutionException, InterruptedException {
-        HttpRemoteService httpRemoteService = new HttpRemoteService(new Node("127.0.0.1", 80), mockHttpClient);
+        HttpRemoteService<String, User> httpRemoteService = new HttpRemoteService<>(new Node("127.0.0.1", 80), mockHttpClient);
         httpRemoteService.start();
 
         final ResourceHandlerRequest<String> resourceHandlerRequest = new ResourceHandlerRequest<>() {
@@ -46,7 +47,7 @@ public class HttpRemoteServiceTest {
             }
         };
         // 1. 准备Mock数据
-        String successResponseBody = "{\"name\":\"jack\",\"email\":12312@das.com}";
+        String successResponseBody = "{\"name\":\"jack\",\"email\":\"12312@das.com\"}";
         when(mockHttpResponse.body()).thenReturn(successResponseBody);
         when(mockHttpResponse.statusCode()).thenReturn(200);
 
@@ -55,10 +56,13 @@ public class HttpRemoteServiceTest {
         when(mockHttpClient.sendAsync(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
                 .thenReturn(successfulFuture);
 
-        final CompletableFuture<ResourceHandlerResponse> completableFuture = httpRemoteService.handle(resourceHandlerRequest);
+        final CompletableFuture<ResourceHandlerResponse<User>> completableFuture = httpRemoteService.handle(resourceHandlerRequest, User.class);
         Assertions.assertTrue(completableFuture.isDone());
         Assertions.assertTrue(completableFuture.get().isSuccess());
-        System.out.println(completableFuture.get().data());
+        System.out.println(completableFuture.get().data().name);
+        System.out.println(completableFuture.get().data().email);
     }
 
+    record User(String name, String email) {
+    }
 }

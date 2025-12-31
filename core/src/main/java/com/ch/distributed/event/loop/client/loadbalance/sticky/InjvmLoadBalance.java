@@ -12,7 +12,7 @@ public class InjvmLoadBalance extends AbstractLoadBalance {
     private final ConcurrentHashMap<String, Node> nodeMap = new ConcurrentHashMap<>();
 
     @Override
-    protected Node find(ResourceHandlerRequest resourceHandlerRequest, final List<Node> nodes) {
+    protected <T> Node find(ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes) {
         return nodeMap.computeIfAbsent(resourceHandlerRequest.getKey(), key -> localNode);
     }
 }

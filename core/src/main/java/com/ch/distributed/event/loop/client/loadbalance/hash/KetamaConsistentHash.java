@@ -20,7 +20,7 @@ public class KetamaConsistentHash extends AbstractLoadBalance {
     private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(KetamaConsistentHash.class);
 
     @Override
-    protected Node find(ResourceHandlerRequest resourceHandlerRequest, final List<Node> nodes) {
+    protected <T> Node find(ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes) {
         final TreeMap<Long, Node> hashCycle = buildHashCycle(nodes);
         if (hashCycle != null && !hashCycle.isEmpty()) {
             return findNodeByKey(resourceHandlerRequest.getKey(), hashCycle);

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class RedisStickLoadBalance extends AbstractLoadBalance {
     @Override
-    protected Node find(ResourceHandlerRequest resourceHandlerRequest, final List<Node> nodes) {
+    protected <T> Node find(ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes) {
         // todo redis
         return null;
     }

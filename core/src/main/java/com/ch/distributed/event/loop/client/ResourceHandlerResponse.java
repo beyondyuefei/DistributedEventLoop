@@ -1,10 +1,9 @@
 package com.ch.distributed.event.loop.client;
 
-public interface ResourceHandlerResponse {
+public interface ResourceHandlerResponse<R> {
     boolean isSuccess();
 
-    // todo: 支持泛型
-    String data();
+    R data();
 
     Exception exception();
 }
