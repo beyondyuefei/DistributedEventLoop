@@ -8,5 +8,5 @@ import com.ch.distributed.event.loop.registry.RegistryNotifyListener;
 import java.util.List;
 
 public interface Cluster {
-    <T,R> ResourceHandler<T,R> join();
+     ResourceHandler join();
 }

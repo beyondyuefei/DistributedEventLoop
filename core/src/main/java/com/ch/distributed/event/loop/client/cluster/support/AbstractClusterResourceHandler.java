@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractClusterResourceHandler<T, R> implements ClusterResourceHandler<T, R>, Component {
+public abstract class AbstractClusterResourceHandler implements ClusterResourceHandler, Component {
     private volatile LoadBalance loadBalance;
     private volatile RegistryService registryService;
     private volatile List<Node> nodes;
@@ -31,7 +31,7 @@ public abstract class AbstractClusterResourceHandler<T, R> implements ClusterRes
         });
     }
 
-    protected final ResourceHandler<T, R> doSelect(final ResourceHandlerRequest<T> resourceHandlerRequest) {
+    protected final <T> ResourceHandler doSelect(final ResourceHandlerRequest<T> resourceHandlerRequest) {
         return loadBalance.select(resourceHandlerRequest, nodes);
     }
 

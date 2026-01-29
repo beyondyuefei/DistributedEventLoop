@@ -42,4 +42,9 @@ public class ResourceExecutorComponentTest {
         completableFuture.join();
         resourceExecutorComponent.stop();
     }
+
+    @Test
+    public void testResourceExecutorAsync_2() {
+        System.out.println(123);
+    }
 }

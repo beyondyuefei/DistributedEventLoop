@@ -5,7 +5,7 @@ import com.ch.distributed.event.loop.client.cluster.support.FastfailClusterResou
 
 public class FastfailCluster implements Cluster {
     @Override
-    public <T,R> ResourceHandler<T,R> join() {
-        return new FastfailClusterResourceHandler<>();
+    public ResourceHandler join() {
+        return new FastfailClusterResourceHandler();
     }
 }

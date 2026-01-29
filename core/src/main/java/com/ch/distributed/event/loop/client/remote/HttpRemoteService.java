@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
-public class HttpRemoteService<T, R> extends AbstractRemoteService<T, R> {
+public class HttpRemoteService extends AbstractRemoteService{
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HttpRemoteService.class);
     private volatile HttpClient httpClient;
     private static final String URL = "http://%s:%s/resource/handler/";
@@ -55,7 +55,7 @@ public class HttpRemoteService<T, R> extends AbstractRemoteService<T, R> {
     }
 
     @Override
-    public CompletableFuture<ResourceHandlerResponse<R>> handle(ResourceHandlerRequest<T> resourceHandlerRequest, final Class<R> rClass) {
+    public <T,R> CompletableFuture<ResourceHandlerResponse<R>> handle(ResourceHandlerRequest<T> resourceHandlerRequest, final Class<R> rClass) {
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL.formatted(node.getIp(), node.getPort())))
                 .header("Content-Type", "application/json")

@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
-public class FastfailClusterResourceHandler<T, R> extends AbstractClusterResourceHandler<T, R> {
+public class FastfailClusterResourceHandler extends AbstractClusterResourceHandler {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FastfailClusterResourceHandler.class);
 
     @Override
-    public CompletableFuture<ResourceHandlerResponse<R>> handle(ResourceHandlerRequest<T> resourceHandlerRequest, final Class<R> rClass) {
+    public <T,R> CompletableFuture<ResourceHandlerResponse<R>> handle(ResourceHandlerRequest<T> resourceHandlerRequest, final Class<R> rClass) {
         try {
             return doSelect(resourceHandlerRequest).handle(resourceHandlerRequest, rClass);
         } catch (Exception e) {

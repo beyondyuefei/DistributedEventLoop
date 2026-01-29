@@ -7,5 +7,5 @@ import com.ch.distributed.event.loop.common.Node;
 import java.util.List;
 
 public interface LoadBalance {
-    <T, R> ResourceHandler<T, R> select(final ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes);
+    <T> ResourceHandler select(final ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes);
 }

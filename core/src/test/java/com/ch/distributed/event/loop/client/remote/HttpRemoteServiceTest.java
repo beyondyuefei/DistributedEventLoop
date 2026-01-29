@@ -27,7 +27,7 @@ public class HttpRemoteServiceTest {
 
     @Test
     public void test() throws ExecutionException, InterruptedException {
-        HttpRemoteService<String, User> httpRemoteService = new HttpRemoteService<>(new Node("127.0.0.1", 80), mockHttpClient);
+        HttpRemoteService httpRemoteService = new HttpRemoteService(new Node("127.0.0.1", 80), mockHttpClient);
         httpRemoteService.start();
 
         final ResourceHandlerRequest<String> resourceHandlerRequest = new ResourceHandlerRequest<>() {

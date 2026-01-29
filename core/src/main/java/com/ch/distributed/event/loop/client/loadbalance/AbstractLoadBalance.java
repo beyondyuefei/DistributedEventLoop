@@ -10,16 +10,16 @@ import java.util.List;
 public abstract class AbstractLoadBalance implements LoadBalance {
 
     @Override
-    public <T, R> ResourceHandler<T, R> select(final ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes) {
+    public <T> ResourceHandler select(final ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes) {
         if (nodes == null || nodes.isEmpty()) {
             return null;
         }
 
         if (nodes.size() == 1) {
-            return new HttpRemoteService<>(nodes.getFirst());
+            return new HttpRemoteService(nodes.getFirst());
         }
 
-        return new HttpRemoteService<>(find(resourceHandlerRequest, nodes));
+        return new HttpRemoteService(find(resourceHandlerRequest, nodes));
     }
 
     protected abstract <T> Node find(final ResourceHandlerRequest<T> resourceHandlerRequest, final List<Node> nodes);
