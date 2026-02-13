@@ -15,7 +15,7 @@ public class FastfailClusterResourceHandler extends AbstractClusterResourceHandl
         try {
             return doSelect(resourceHandlerRequest).handle(resourceHandlerRequest, rClass);
         } catch (Exception e) {
-            LOGGER.error("处理请求失败，直接抛出异常");
+            LOGGER.error("处理请求失败，直接抛出异常", e);
             throw new ResourceHandlerException(e);
         }
     }

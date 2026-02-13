@@ -17,12 +17,21 @@ import java.util.concurrent.CompletableFuture;
 public class DefaultProtocol implements Protocol {
     // todo: 自动识别Filter并加载
     private final List<Filter> filters = List.of(new LogFilter(), new MockFilter());
+    private final Cluster cluster;
+
+    public DefaultProtocol(Cluster cluster) {
+        this.cluster = cluster;
+    }
 
     @Override
     public ResourceHandler refer(String resourceHandlerName) {
-        final Cluster cluster = new FastfailCluster();
         // 将clusterResourceHandler放在Invoker/Filter链式调用的最后来执行 (因为涉及到真正的网络调用等，自定义的Filter优先执行)
         ResourceHandler lastResourceHandler = cluster.join();
+        lastResourceHandler = buildInvokerChain(lastResourceHandler);
+        return lastResourceHandler;
+    }
+
+    private ResourceHandler buildInvokerChain(ResourceHandler lastResourceHandler) {
         for (int i = filters.size() - 1; i >= 0; i--) {
             final Filter filter = filters.get(i);
             final ResourceHandler nextResourceHandler = lastResourceHandler;
