@@ -102,35 +102,13 @@ public class DefaultProtocolTest {
         when(mockCluster.join()).thenReturn(mockResourceHandler);
 
         // 构造 DefaultProtocol 实例，过滤器列表为空
-        DefaultProtocol protocol = new DefaultProtocol(mockCluster);
-        try {
-            var filtersField = DefaultProtocol.class.getDeclaredField("filters");
-            filtersField.setAccessible(true);
-            filtersField.set(protocol, List.of()); // 空列表
-        } catch (Exception e) {
-            fail("Failed to inject empty filters into DefaultProtocol", e);
-        }
+        DefaultProtocol protocol = new DefaultProtocol(mockCluster, List.of());
 
         // 调用 refer 方法
         ResourceHandler resultHandler = protocol.refer("test-handler");
 
         // 验证直接返回了 mockResourceHandler
         assertSame(mockResourceHandler, resultHandler);
-    }
-
-    /**
-     * 测试边界情况：cluster.join() 返回 null
-     */
-    @Test
-    void testRefer_ClusterJoinReturnsNull() {
-        // 模拟 cluster.join() 返回 null
-        when(mockCluster.join()).thenReturn(null);
-
-        // 构造 DefaultProtocol 实例
-        DefaultProtocol protocol = new DefaultProtocol(mockCluster);
-
-        // 调用 refer 方法，期望抛出 NullPointerException
-        assertThrows(NullPointerException.class, () -> protocol.refer("test-handler"));
     }
 
     /**

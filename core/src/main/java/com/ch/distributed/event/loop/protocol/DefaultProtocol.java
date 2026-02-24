@@ -4,23 +4,33 @@ import com.ch.distributed.event.loop.client.ResourceHandler;
 import com.ch.distributed.event.loop.client.ResourceHandlerRequest;
 import com.ch.distributed.event.loop.client.ResourceHandlerResponse;
 import com.ch.distributed.event.loop.client.cluster.Cluster;
-import com.ch.distributed.event.loop.client.cluster.FastfailCluster;
 import com.ch.distributed.event.loop.filter.Filter;
 import com.ch.distributed.event.loop.filter.impl.LogFilter;
 import com.ch.distributed.event.loop.filter.impl.MockFilter;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 // todo: 还要处理resourceHandlerName的唯一性问题，因为这里存在多个resourceHandlerName (当作RPC的接口全限名来使用)，如何处理？
 //  另外，服务端上报的resourceHandlerName，也是要附带服务端IP地址，建连等需要使用到
 public class DefaultProtocol implements Protocol {
-    // todo: 自动识别Filter并加载
-    private final List<Filter> filters = List.of(new LogFilter(), new MockFilter());
+    private final List<Filter> filters;
     private final Cluster cluster;
 
+    /**
+     * 构造函数 - 使用默认的 Filter 列表
+     */
     public DefaultProtocol(Cluster cluster) {
-        this.cluster = cluster;
+        this(cluster, List.of(new LogFilter(), new MockFilter()));
+    }
+
+    /**
+     * 构造函数 - 支持自定义 Filter 列表
+     */
+    public DefaultProtocol(Cluster cluster, List<Filter> filters) {
+        this.cluster = Objects.requireNonNull(cluster, "cluster cannot be null");
+        this.filters = Objects.requireNonNull(filters, "filters cannot be null");
     }
 
     @Override
