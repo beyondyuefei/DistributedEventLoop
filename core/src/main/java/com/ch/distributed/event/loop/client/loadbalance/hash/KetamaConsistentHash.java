@@ -2,6 +2,7 @@ package com.ch.distributed.event.loop.client.loadbalance.hash;
 
 import com.ch.distributed.event.loop.client.ResourceHandlerRequest;
 import com.ch.distributed.event.loop.client.loadbalance.AbstractLoadBalance;
+import com.ch.distributed.event.loop.client.remote.RemoteServiceFactory;
 import com.ch.distributed.event.loop.common.Node;
 import org.slf4j.Logger;
 
@@ -15,6 +16,14 @@ import java.util.TreeMap;
  * todo: 确认hash环需要每一次请求时构建吗？影响性能，是否在构造函数中初始化 ？
  */
 public class KetamaConsistentHash extends AbstractLoadBalance {
+
+    public KetamaConsistentHash() {
+        super();
+    }
+
+    public KetamaConsistentHash(RemoteServiceFactory remoteServiceFactory) {
+        super(remoteServiceFactory);
+    }
     // todo: 每个节点的虚拟节点数量，如果要可配置呢 ？
     private static final int NODE_COPY_NUM = 100;
     private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(KetamaConsistentHash.class);
